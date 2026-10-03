@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+demo/
+*.egg-info/
+.venv/
+venv/
+results.xml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# PyCharm / IntelliJ
+.idea/
+
+# VS Code
+.vscode/

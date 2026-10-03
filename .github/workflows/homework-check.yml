@@ -1,0 +1,41 @@
+name: Проверка домашних заданий
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Установка зависимостей
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Запуск тестов
+        id: run_tests
+        run: pytest --junitxml=results.xml -v
+        continue-on-error: true
+
+      - name: Сводка результатов
+        if: always()
+        run: python .github/scripts/junit_to_summary.py results.xml >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Провалить job, если есть непройденные тесты
+        if: steps.run_tests.outcome == 'failure'
+        run: |
+          echo "Часть тестов домашнего задания не пройдена – см. сводку выше (Summary)."
+          exit 1
